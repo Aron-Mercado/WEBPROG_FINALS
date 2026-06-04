@@ -1,0 +1,8 @@
+# backend/public/.htaccess
+# Redirect all requests to index.php so the PHP router can handle REST endpoints.
+
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L,QSA]

@@ -1,0 +1,29 @@
+# Dependencies
+frontend/finalsFrontEnd/node_modules/
+frontend/node_modules/
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/finalsFrontEnd/.env
+frontend/finalsFrontEnd/.env.local
+
+# Database dumps with real users / tokens / passwords
+database/*export*.sql
+**/food_delivery_export*.sql
+
+# Build and logs
+*.log
+frontend/finalsFrontEnd/dist/
+frontend/dist/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+backend/.env.example
+frontend/finalsFrontEnd/.gitignore
+database/sample_data.sql

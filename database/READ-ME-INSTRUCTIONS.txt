@@ -1,0 +1,1 @@
+import food_delivery_export 2 to MySQL Workbench and run the commands to create the database. Make sure XAMPP is on for MySQL
