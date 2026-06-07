@@ -8,23 +8,27 @@ export default function CartPage({ items, updateCart, removeFromCart, goToChecko
   }, 0);
 
   return (
-    <section className="py-8 px-4 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">Your Cart</h2>
+    <section className="page-wrap max-w-4xl">
+      <div className="mb-8">
+        <h2 className="page-title">Your cart</h2>
+        <p className="page-subtitle">Review items before checkout</p>
+      </div>
+
       {items.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-xl text-gray-600">Your cart is empty. Add items from the menu.</p>
+        <div className="empty-state">
+          <p>Your cart is empty. Head to the menu to add something tasty.</p>
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-            <table className="w-full">
-              <thead className="bg-gray-100 border-b">
+          <div className="card overflow-hidden mb-6">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Product</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Price</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Quantity</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Subtotal</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Action</th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Qty</th>
+                  <th>Subtotal</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -33,24 +37,25 @@ export default function CartPage({ items, updateCart, removeFromCart, goToChecko
                   const stockMax = item.stock !== undefined ? Number(item.stock) : 999;
                   const subtotal = price * item.quantity;
                   return (
-                    <tr key={item.product_id} className="border-b hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium text-gray-800">{item.name}</td>
-                      <td className="px-6 py-4 text-gray-700">${price.toFixed(2)}</td>
-                      <td className="px-6 py-4">
+                    <tr key={item.product_id}>
+                      <td className="font-medium text-slate-800">{item.name}</td>
+                      <td>${price.toFixed(2)}</td>
+                      <td>
                         <input
                           type="number"
                           min="1"
                           max={stockMax}
                           value={item.quantity}
                           onChange={(e) => updateCart(item.product_id, Number(e.target.value))}
-                          className="w-16 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input-field w-20 py-2 text-center"
                         />
                       </td>
-                      <td className="px-6 py-4 font-semibold text-gray-800">${subtotal.toFixed(2)}</td>
-                      <td className="px-6 py-4">
+                      <td className="font-semibold text-slate-800">${subtotal.toFixed(2)}</td>
+                      <td>
                         <button
+                          type="button"
                           onClick={() => removeFromCart(item.product_id)}
-                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium transition"
+                          className="btn-danger-soft"
                         >
                           Remove
                         </button>
@@ -62,16 +67,13 @@ export default function CartPage({ items, updateCart, removeFromCart, goToChecko
             </table>
           </div>
 
-          <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-            <div className="flex justify-between items-center mb-6">
-              <p className="text-xl font-bold text-gray-800">Cart Total:</p>
-              <p className="text-3xl font-bold text-blue-600">${total.toFixed(2)}</p>
+          <div className="summary-strip">
+            <div className="flex justify-between items-center mb-5">
+              <p className="text-lg font-semibold text-slate-700">Cart total</p>
+              <p className="text-3xl font-bold text-teal-700">${total.toFixed(2)}</p>
             </div>
-            <button
-              onClick={goToCheckout}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
-            >
-              Proceed to Checkout
+            <button type="button" onClick={goToCheckout} className="btn-primary-full">
+              Proceed to checkout
             </button>
           </div>
         </>

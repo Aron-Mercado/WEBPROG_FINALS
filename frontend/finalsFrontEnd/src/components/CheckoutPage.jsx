@@ -8,22 +8,26 @@ export default function CheckoutPage({ items, onConfirm, onGoBack }) {
   }, 0);
 
   return (
-    <section className="py-8 px-4 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">Order Summary & Checkout</h2>
+    <section className="page-wrap max-w-4xl">
+      <div className="mb-8">
+        <h2 className="page-title">Checkout</h2>
+        <p className="page-subtitle">Confirm your order summary</p>
+      </div>
+
       {items.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-xl text-gray-600">Your cart is empty. Please add items before checking out.</p>
+        <div className="empty-state">
+          <p>Your cart is empty. Add items before checking out.</p>
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-            <table className="w-full">
-              <thead className="bg-gray-100 border-b">
+          <div className="card overflow-hidden mb-6">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Product</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Price</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Quantity</th>
-                  <th className="text-left px-6 py-4 font-bold text-gray-700">Total</th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Qty</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -31,11 +35,11 @@ export default function CheckoutPage({ items, onConfirm, onGoBack }) {
                   const price = Number(item.price) || 0;
                   const itemTotal = price * item.quantity;
                   return (
-                    <tr key={item.product_id} className="border-b hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium text-gray-800">{item.name}</td>
-                      <td className="px-6 py-4 text-gray-700">${price.toFixed(2)}</td>
-                      <td className="px-6 py-4 text-gray-700">{item.quantity}</td>
-                      <td className="px-6 py-4 font-semibold text-gray-800">${itemTotal.toFixed(2)}</td>
+                    <tr key={item.product_id}>
+                      <td className="font-medium text-slate-800">{item.name}</td>
+                      <td>${price.toFixed(2)}</td>
+                      <td>{item.quantity}</td>
+                      <td className="font-semibold">${itemTotal.toFixed(2)}</td>
                     </tr>
                   );
                 })}
@@ -43,25 +47,19 @@ export default function CheckoutPage({ items, onConfirm, onGoBack }) {
             </table>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-6 border border-green-200 mb-6">
+          <div className="summary-strip mb-6">
             <div className="flex justify-between items-center">
-              <p className="text-2xl font-bold text-gray-800">Order Total:</p>
-              <p className="text-4xl font-bold text-green-600">${total.toFixed(2)}</p>
+              <p className="text-xl font-semibold text-slate-700">Order total</p>
+              <p className="text-4xl font-bold text-teal-700">${total.toFixed(2)}</p>
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <button
-              onClick={onConfirm}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition"
-            >
-              ✓ Confirm Order
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button type="button" onClick={onConfirm} className="btn-primary flex-1 py-3">
+              Confirm order
             </button>
-            <button
-              onClick={onGoBack}
-              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-lg transition"
-            >
-              ← Back to Cart
+            <button type="button" onClick={onGoBack} className="btn-secondary flex-1 py-3">
+              Back to cart
             </button>
           </div>
         </>

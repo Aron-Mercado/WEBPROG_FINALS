@@ -11,52 +11,41 @@ export default function RegisterPage({ onRegister, onSwitchToLogin, loading }) {
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+    <section className="auth-shell">
+      <div className="auth-card">
+        <h2>Create account</h2>
+        <p className="auth-tagline">Join as a customer and start ordering</p>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
+            <label className="label">Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="input-field"
               placeholder="Choose a username"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
+            <label className="label">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="input-field"
               placeholder="Choose a password"
             />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition disabled:opacity-50"
-          >
+          <button type="submit" disabled={loading} className="btn-primary-full">
             {loading ? 'Creating account...' : 'Register'}
           </button>
         </form>
-        <p className="text-center text-gray-600 mt-6">
+        <p className="text-center text-slate-500 mt-6 text-sm">
           Already have an account?{' '}
-          <button
-            type="button"
-            onClick={onSwitchToLogin}
-            className="text-green-600 hover:underline font-medium"
-          >
-            Sign in here
+          <button type="button" onClick={onSwitchToLogin} className="link-brand">
+            Sign in
           </button>
         </p>
       </div>

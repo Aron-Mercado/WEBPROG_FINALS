@@ -1,6 +1,18 @@
 /** ProductCard — one menu item with Add to Cart button */
 import React, { useState } from 'react';
 
+function foodEmoji(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('pizza')) return '🍕';
+  if (n.includes('burger')) return '🍔';
+  if (n.includes('sandwich') || n.includes('chicken')) return '🥪';
+  if (n.includes('fries') || n.includes('french')) return '🍟';
+  if (n.includes('cola') || n.includes('drink') || n.includes('soda')) return '🥤';
+  if (n.includes('salad')) return '🥗';
+  if (n.includes('coffee')) return '☕';
+  return '🍽️';
+}
+
 export default function ProductCard({ product, onAdd }) {
   const [quantity, setQuantity] = useState(1);
   const stockNum = Number(product.stock) || 0;
@@ -14,41 +26,43 @@ export default function ProductCard({ product, onAdd }) {
     }
   };
 
+  const stockClass =
+    stockNum > 5 ? 'text-teal-600' : stockNum > 0 ? 'text-amber-600' : 'text-rose-600';
+
   return (
-    <div
-      className={`bg-white rounded-lg shadow-md overflow-hidden transition transform hover:shadow-lg ${
-        isOutOfStock ? 'opacity-60' : ''
+    <article
+      className={`card-padded flex flex-col h-full transition hover:shadow-md ${
+        isOutOfStock ? 'opacity-70' : ''
       }`}
     >
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{product.name}</h3>
-        <p className="text-2xl font-bold text-green-600 mb-3">${priceNum.toFixed(2)}</p>
-        <p className="text-gray-600 mb-4">
-          Stock: <span className={stockNum > 5 ? 'text-green-600 font-bold' : stockNum > 0 ? 'text-yellow-600 font-bold' : 'text-red-600 font-bold'}>{stockNum}</span>
-        </p>
-        {isOutOfStock ? (
-          <span className="inline-block w-full text-center bg-red-100 text-red-700 py-2 rounded font-semibold">
-            Out of Stock
-          </span>
-        ) : (
-          <div className="space-y-3">
-            <input
-              type="number"
-              min="1"
-              max={stockNum}
-              value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={handleAdd}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition"
-            >
-              Add to Cart
-            </button>
-          </div>
-        )}
+      <div className="food-placeholder" aria-hidden="true">
+        {foodEmoji(product.name)}
       </div>
-    </div>
+
+      <h3 className="text-lg font-bold text-slate-800 mb-1">{product.name}</h3>
+      <p className="text-2xl font-bold text-teal-600 mb-2">${priceNum.toFixed(2)}</p>
+      <p className="text-sm text-slate-500 mb-4">
+        In stock: <span className={`font-bold ${stockClass}`}>{stockNum}</span>
+      </p>
+
+      {isOutOfStock ? (
+        <span className="badge-danger text-center py-2 mt-auto">Out of stock</span>
+      ) : (
+        <div className="space-y-3 mt-auto">
+          <input
+            type="number"
+            min="1"
+            max={stockNum}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+            className="input-field py-2"
+            aria-label={`Quantity for ${product.name}`}
+          />
+          <button type="button" onClick={handleAdd} className="btn-primary-full">
+            Add to cart
+          </button>
+        </div>
+      )}
+    </article>
   );
 }
