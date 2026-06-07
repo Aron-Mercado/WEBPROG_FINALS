@@ -26,6 +26,7 @@ import {
   updateProduct,
   deleteProduct,
   updateOrderStatus,
+  logoutUser,
 } from './services/api';
 
 const pages = {
@@ -49,16 +50,24 @@ export default function App() {
   const [authUser, setAuthUser] = useState(null);
 
   const persistAuth = (user, token) => {
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('authToken', token);
+    sessionStorage.setItem('user', JSON.stringify(user));
     setAuthUser(user);
   };
 
-  const clearAuth = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+  const resetToLogin = (msg = '') => {
     setAuthUser(null);
+    setCart([]);
+    setOrders([]);
     setPage(pages.LOGIN);
+    if (msg) {
+      setMessage(msg);
+    }
+  };
+
+  const clearAuth = async () => {
+    await logoutUser();
+    resetToLogin();
   };
 
   const loadProducts = async (includeArchived = false) => {
@@ -85,16 +94,28 @@ export default function App() {
     setLoading(false);
   };
 
-  // Restore session from browser storage on refresh
+  // sessionStorage survives refresh in same tab, but clears when tab/window closes
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('authToken');
+    // Drop legacy localStorage login only (do not clear sessionStorage here)
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    const storedUser = sessionStorage.getItem('user');
+    const storedToken = sessionStorage.getItem('authToken');
     if (storedUser && storedToken) {
       setAuthUser(JSON.parse(storedUser));
       setPage(pages.MENU);
     }
 
     loadProducts(false);
+  }, []);
+
+  // Server down or expired token → back to login
+  useEffect(() => {
+    const onSessionEnded = () => {
+      resetToLogin('Session ended. Please sign in again.');
+    };
+    window.addEventListener('session-expired', onSessionEnded);
+    return () => window.removeEventListener('session-expired', onSessionEnded);
   }, []);
 
   const handleLogin = async (credentials) => {

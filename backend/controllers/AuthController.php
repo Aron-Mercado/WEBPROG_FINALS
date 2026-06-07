@@ -80,4 +80,15 @@ class AuthController {
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'user' => ['username' => $user['username'], 'role' => $user['role']], 'token' => $token]);
     }
+
+    /** Clears api_token in DB so this session cannot be reused */
+    public function logout() {
+        require_once __DIR__ . '/../config/auth.php';
+        $user = Auth::user();
+        if ($user) {
+            $this->userModel->clearToken($user['id']);
+        }
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+    }
 }

@@ -1,9 +1,12 @@
 /**
  * api.js — all HTTP calls to the PHP backend.
- * VITE_API_BASE comes from .env (not hardcoded). Token from login is sent as Bearer auth.
+ * Session uses sessionStorage (clears when tab/browser closes), not localStorage.
  */
 
 const API_BASE = import.meta.env.VITE_API_BASE;
+
+const AUTH_TOKEN_KEY = 'authToken';
+const AUTH_USER_KEY = 'user';
 
 if (!API_BASE) {
   console.error(
@@ -11,9 +14,22 @@ if (!API_BASE) {
   );
 }
 
-/** Attach JSON content-type and login token if user is signed in */
+/** sessionStorage = one tab session; gone when tab/window closes */
+export function clearClientSession() {
+  sessionStorage.removeItem(AUTH_TOKEN_KEY);
+  sessionStorage.removeItem(AUTH_USER_KEY);
+  // Remove legacy localStorage sessions from older versions
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(AUTH_USER_KEY);
+}
+
+function notifySessionEnded() {
+  clearClientSession();
+  window.dispatchEvent(new Event('session-expired'));
+}
+
 function authHeaders() {
-  const token = localStorage.getItem('authToken');
+  const token = sessionStorage.getItem(AUTH_TOKEN_KEY);
   return token
     ? {
         'Content-Type': 'application/json',
@@ -22,13 +38,17 @@ function authHeaders() {
     : { 'Content-Type': 'application/json' };
 }
 
-/** Parse JSON; return { error } on failure so App.jsx can show a message */
-async function handleResponse(response) {
+async function handleResponse(response, hadToken = false) {
   const responseClone = response.clone();
   try {
     const data = await response.json();
     if (!response.ok) {
-      return { error: data.error || `Server error (${response.status})` };
+      const result = { error: data.error || `Server error (${response.status})` };
+      if (response.status === 401 && hadToken) {
+        result.unauthorized = true;
+        notifySessionEnded();
+      }
+      return result;
     }
     return data;
   } catch (error) {
@@ -42,13 +62,47 @@ async function handleResponse(response) {
   }
 }
 
-/** Central fetch — every exported function uses this */
 async function apiFetch(path, options = {}) {
   if (!API_BASE) {
     return { error: 'API URL not configured. Set VITE_API_BASE in .env' };
   }
-  const res = await fetch(`${API_BASE}${path}`, options);
-  return handleResponse(res);
+  const hadToken = !!sessionStorage.getItem(AUTH_TOKEN_KEY) && path !== '/login' && path !== '/register';
+  try {
+    const res = await fetch(`${API_BASE}${path}`, options);
+    return handleResponse(res, hadToken);
+  } catch {
+    if (hadToken) {
+      notifySessionEnded();
+      return { error: 'Could not reach server. Session ended.', unauthorized: true };
+    }
+    return { error: 'Could not reach server. Is the API running?' };
+  }
+}
+
+/** Manual logout — invalidates token on server */
+export async function logoutUser() {
+  const result = await apiFetch('/logout', {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  clearClientSession();
+  return result;
+}
+
+/** Tab/browser close — invalidate server token (fetch keepalive runs during page unload) */
+export function logoutBeacon() {
+  if (!API_BASE) {
+    return;
+  }
+  const token = sessionStorage.getItem(AUTH_TOKEN_KEY);
+  if (!token) {
+    return;
+  }
+  fetch(`${API_BASE}/logout`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    keepalive: true,
+  }).catch(() => {});
 }
 
 export async function registerUser(credentials) {

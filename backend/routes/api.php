@@ -23,7 +23,7 @@ $path = trim($requestUri, '/');
 
 if (strpos($path, 'api/') !== false) {
     $path = substr($path, strpos($path, 'api/') + strlen('api/'));
-} elseif (preg_match('#\b(products|orders|login|register)\b#', $path, $matches, PREG_OFFSET_CAPTURE)) {
+} elseif (preg_match('#\b(products|orders|login|register|logout)\b#', $path, $matches, PREG_OFFSET_CAPTURE)) {
     $path = substr($path, $matches[0][1]);
 }
 
@@ -46,6 +46,11 @@ if ($segments[0] === 'register' && $method === 'POST' && count($segments) === 1)
 
 if ($segments[0] === 'login' && $method === 'POST' && count($segments) === 1) {
     $authController->login();
+    return;
+}
+
+if ($segments[0] === 'logout' && $method === 'POST' && count($segments) === 1) {
+    $authController->logout();
     return;
 }
 

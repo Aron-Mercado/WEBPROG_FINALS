@@ -45,4 +45,10 @@ class UserModel {
         $stmt = $this->db->prepare('UPDATE users SET api_token = ? WHERE id = ?');
         return $stmt->execute([$token, $id]);
     }
+
+    /** Invalidate session token (logout / tab close) */
+    public function clearToken($id) {
+        $stmt = $this->db->prepare('UPDATE users SET api_token = NULL WHERE id = ?');
+        return $stmt->execute([$id]);
+    }
 }

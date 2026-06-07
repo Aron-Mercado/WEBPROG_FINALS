@@ -34,12 +34,12 @@ $path = trim($requestUri, '/');
 
 if (strpos($path, 'api/') !== false) {
     $path = substr($path, strpos($path, 'api/'));
-} elseif (preg_match('#\b(products|orders|login|register)\b#', $path, $matches, PREG_OFFSET_CAPTURE)) {
+} elseif (preg_match('#\b(products|orders|login|register|logout)\b#', $path, $matches, PREG_OFFSET_CAPTURE)) {
     $path = substr($path, $matches[0][1]);
 }
 
 // Hand off to the router if this looks like an API call
-if ($path === 'api' || strpos($path, 'api/') === 0 || strpos($path, 'products') === 0 || strpos($path, 'orders') === 0 || strpos($path, 'login') === 0 || strpos($path, 'register') === 0) {
+if ($path === 'api' || strpos($path, 'api/') === 0 || strpos($path, 'products') === 0 || strpos($path, 'orders') === 0 || strpos($path, 'login') === 0 || strpos($path, 'register') === 0 || strpos($path, 'logout') === 0) {
     require_once __DIR__ . '/../routes/api.php';
     return;
 }
