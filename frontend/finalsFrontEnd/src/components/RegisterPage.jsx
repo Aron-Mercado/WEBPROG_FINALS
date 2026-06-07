@@ -1,3 +1,4 @@
+/** RegisterPage — new customer account; always creates role customer on backend */
 import React, { useState } from 'react';
 
 export default function RegisterPage({ onRegister, onSwitchToLogin, loading }) {

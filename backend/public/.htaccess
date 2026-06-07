@@ -3,6 +3,11 @@
 
 Options -Indexes
 RewriteEngine On
+
+# Pass Authorization header through to PHP (required for Bearer login on XAMPP/Apache)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L,QSA]

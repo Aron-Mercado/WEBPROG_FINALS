@@ -1,3 +1,4 @@
+/** CartPage — adjust quantities; passes enriched line items from App */
 import React from 'react';
 
 export default function CartPage({ items, updateCart, removeFromCart, goToCheckout }) {

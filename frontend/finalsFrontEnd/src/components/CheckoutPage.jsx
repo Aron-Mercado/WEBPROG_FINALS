@@ -1,3 +1,4 @@
+/** CheckoutPage — order summary; Confirm calls App handleCheckout → POST /orders */
 import React from 'react';
 
 export default function CheckoutPage({ items, onConfirm, onGoBack }) {

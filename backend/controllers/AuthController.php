@@ -1,5 +1,8 @@
 <?php
-// backend/controllers/AuthController.php
+/**
+ * AuthController — login and register (Controller layer).
+ * Validates input, hashes passwords, returns JSON + api token for the frontend.
+ */
 
 require_once __DIR__ . '/../models/UserModel.php';
 
@@ -10,6 +13,7 @@ class AuthController {
         $this->userModel = new UserModel();
     }
 
+    /** Random token stored in DB; frontend sends it on every request as Bearer token */
     private function generateToken() {
         return bin2hex(random_bytes(24));
     }
@@ -40,6 +44,7 @@ class AuthController {
             return;
         }
 
+        // Never store plain text — only bcrypt hash in the database
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $token = $this->generateToken();
         $this->userModel->createUser($username, $passwordHash, 'customer', $token);
@@ -68,6 +73,7 @@ class AuthController {
             return;
         }
 
+        // New token each login (old sessions stop working)
         $token = $this->generateToken();
         $this->userModel->updateToken($user['id'], $token);
 

@@ -1,3 +1,8 @@
+/**
+ * api.js — all HTTP calls to the PHP backend.
+ * VITE_API_BASE comes from .env (not hardcoded). Token from login is sent as Bearer auth.
+ */
+
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 if (!API_BASE) {
@@ -6,6 +11,7 @@ if (!API_BASE) {
   );
 }
 
+/** Attach JSON content-type and login token if user is signed in */
 function authHeaders() {
   const token = localStorage.getItem('authToken');
   return token
@@ -16,6 +22,7 @@ function authHeaders() {
     : { 'Content-Type': 'application/json' };
 }
 
+/** Parse JSON; return { error } on failure so App.jsx can show a message */
 async function handleResponse(response) {
   const responseClone = response.clone();
   try {
@@ -35,6 +42,7 @@ async function handleResponse(response) {
   }
 }
 
+/** Central fetch — every exported function uses this */
 async function apiFetch(path, options = {}) {
   if (!API_BASE) {
     return { error: 'API URL not configured. Set VITE_API_BASE in .env' };

@@ -1,3 +1,4 @@
+/** MenuPage — customer product grid; App.jsx filters out archived items */
 import React from 'react';
 import ProductCard from './ProductCard';
 

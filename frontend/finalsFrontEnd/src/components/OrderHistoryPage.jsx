@@ -1,3 +1,4 @@
+/** OrderHistoryPage — customer "My Orders" or manager status dropdown */
 import React from 'react';
 
 export default function OrderHistoryPage({ orders, role, onUpdateStatus }) {

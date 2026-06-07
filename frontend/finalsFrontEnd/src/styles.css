@@ -1,3 +1,4 @@
+/* Global layout + message/loading boxes; most UI uses Tailwind classes in components */
 @import "tailwindcss";
 
 :root {

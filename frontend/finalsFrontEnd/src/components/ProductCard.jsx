@@ -1,3 +1,4 @@
+/** ProductCard — one menu item with Add to Cart button */
 import React, { useState } from 'react';
 
 export default function ProductCard({ product, onAdd }) {

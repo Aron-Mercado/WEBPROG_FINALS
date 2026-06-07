@@ -1,3 +1,4 @@
+/** Header — top nav; shows different links for guest, customer, or manager */
 import React from 'react';
 
 export default function Header({ currentPage, onNavigate, authUser, cartCount, onLogout }) {

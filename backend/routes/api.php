@@ -1,5 +1,10 @@
 <?php
-// backend/routes/api.php
+/**
+ * api.php — ROUTER: maps URL + HTTP method → controller method.
+ *
+ * Example: PUT /api/products/3 → ProductController::update(3)
+ *          POST /api/login     → AuthController::login()
+ */
 
 require_once __DIR__ . '/../controllers/ProductController.php';
 require_once __DIR__ . '/../controllers/OrderController.php';
@@ -22,6 +27,7 @@ if (strpos($path, 'api/') !== false) {
     $path = substr($path, $matches[0][1]);
 }
 
+// e.g. ["products", "5"] or ["orders", "status", "2"]
 $segments = array_values(array_filter(explode('/', trim($path, '/'))));
 
 if (count($segments) === 0) {
@@ -44,6 +50,7 @@ if ($segments[0] === 'login' && $method === 'POST' && count($segments) === 1) {
 }
 
 if ($segments[0] === 'products') {
+    // Managers pass ?archived=1 to see hidden menu items
     $includeArchived = isset($_GET['archived']) && $_GET['archived'] === '1';
 
     if ($method === 'GET' && count($segments) === 1) {

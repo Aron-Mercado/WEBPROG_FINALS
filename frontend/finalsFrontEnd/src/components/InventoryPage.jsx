@@ -1,10 +1,14 @@
+/**
+ * InventoryPage — manager CRUD: add product, edit, archive (hide from menu), delete.
+ * isProductArchived: DB may send archived as "0" string; Number() fixes Active/Archived UI.
+ */
 import React, { useMemo, useState } from 'react';
 
-/** MySQL/PDO often returns TINYINT as "0"/"1" strings — truthy "0" breaks archive UI in JS */
 export function isProductArchived(product) {
   return Number(product?.archived) === 1;
 }
 
+/** Build body for PUT /api/products/:id including archive flag */
 function toUpdatePayload(product, archivedOverride) {
   const archived =
     archivedOverride !== undefined

@@ -1,3 +1,4 @@
+/** LoginPage — form only; calls App's onLogin which hits api.js */
 import React, { useState } from 'react';
 
 export default function LoginPage({ onLogin, onSwitchToRegister, loading }) {

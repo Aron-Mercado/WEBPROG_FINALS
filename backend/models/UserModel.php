@@ -1,5 +1,8 @@
 <?php
-// backend/models/UserModel.php
+/**
+ * UserModel (Model) — all SQL for the users table.
+ * Controllers call these methods; this file does not handle HTTP or JSON.
+ */
 
 require_once __DIR__ . '/../config/database.php';
 
@@ -22,6 +25,7 @@ class UserModel {
         return $stmt->fetch();
     }
 
+    /** Used by Auth::user() to validate Bearer token from frontend */
     public function getByToken($token) {
         if (!$token) {
             return null;

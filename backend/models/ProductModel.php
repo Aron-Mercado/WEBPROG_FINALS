@@ -1,5 +1,8 @@
 <?php
-// backend/models/ProductModel.php
+/**
+ * ProductModel (Model) — SQL for products (menu + inventory).
+ * archived=1 hides item from customer menu; managers can still list/edit it.
+ */
 
 require_once __DIR__ . '/../config/database.php';
 
@@ -12,6 +15,7 @@ class ProductModel {
         $this->hasArchivedColumn = $this->checkArchivedColumn();
     }
 
+    /** Supports older DBs that might not have archived column yet */
     private function checkArchivedColumn() {
         try {
             $stmt = $this->db->prepare("SHOW COLUMNS FROM products LIKE 'archived'");
@@ -47,6 +51,7 @@ class ProductModel {
         return $row ? $this->normalizeProduct($row) : false;
     }
 
+    /** MySQL may return archived as "0"/"1" strings — force clean numbers for JSON */
     private function normalizeProduct(array $product) {
         if ($this->hasArchivedColumn && array_key_exists('archived', $product)) {
             $product['archived'] = (int) $product['archived'];
@@ -99,6 +104,7 @@ class ProductModel {
         return $stmt->execute([$id]);
     }
 
+    /** Only succeeds if enough stock — prevents negative inventory */
     public function reduceStock($id, $quantity) {
         $stmt = $this->db->prepare('UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?');
         $stmt->execute([$quantity, $id, $quantity]);

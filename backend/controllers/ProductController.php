@@ -1,5 +1,8 @@
 <?php
-// backend/controllers/ProductController.php
+/**
+ * ProductController — menu/inventory API logic.
+ * GET list is public; create/update/delete require manager role.
+ */
 
 require_once __DIR__ . '/../models/ProductModel.php';
 require_once __DIR__ . '/../config/auth.php';
@@ -17,7 +20,7 @@ class ProductController {
     }
 
     public function update($id) {
-        $user = Auth::requireManager();
+        Auth::requireManager();
 
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data || !isset($data['name'], $data['price'], $data['stock'])) {
@@ -49,7 +52,7 @@ class ProductController {
     }
 
     public function create() {
-        $user = Auth::requireManager();
+        Auth::requireManager();
 
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data || !isset($data['name'], $data['price'], $data['stock'])) {
@@ -75,7 +78,7 @@ class ProductController {
     }
 
     public function delete($id) {
-        $user = Auth::requireManager();
+        Auth::requireManager();
 
         $product = $this->model->getProductById($id);
         if (!$product) {

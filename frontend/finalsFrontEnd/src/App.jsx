@@ -1,3 +1,12 @@
+/**
+ * App.jsx — main React app (View layer in MVC).
+ *
+ * Holds global state: user, cart, products, orders, current page.
+ * Talks to backend only through services/api.js.
+ *
+ * Flow: login → customer (menu/cart/checkout) OR manager (inventory/orders)
+ */
+
 import React, { useEffect, useMemo, useState } from 'react';
 import MenuPage from './components/MenuPage';
 import CartPage from './components/CartPage';
@@ -33,7 +42,7 @@ const pages = {
 export default function App() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]); // [{ product_id, quantity }] — ids only until checkout
   const [page, setPage] = useState(pages.LOGIN);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -76,6 +85,7 @@ export default function App() {
     setLoading(false);
   };
 
+  // Restore session from browser storage on refresh
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('authToken');
@@ -250,6 +260,7 @@ export default function App() {
     setMessage(response?.error || 'Could not update order status.');
   };
 
+  // Merge cart ids with product details for display (name, price, stock)
   const currentCartItems = useMemo(
     () =>
       cart.map((item) => {

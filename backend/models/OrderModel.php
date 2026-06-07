@@ -1,5 +1,7 @@
 <?php
-// backend/models/OrderModel.php
+/**
+ * OrderModel (Model) — SQL for orders and order_items tables.
+ */
 
 require_once __DIR__ . '/../config/database.php';
 
@@ -16,6 +18,7 @@ class OrderModel {
         return $this->db->lastInsertId();
     }
 
+    /** Stores price at time of order (in case product price changes later) */
     public function createOrderItem($orderId, $productId, $quantity, $price) {
         $stmt = $this->db->prepare('INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)');
         return $stmt->execute([$orderId, $productId, $quantity, $price]);
@@ -33,6 +36,7 @@ class OrderModel {
         return $stmt->fetchAll();
     }
 
+    /** $userId null = all orders (manager); otherwise one customer's orders */
     public function getOrders($userId = null) {
         if ($userId !== null) {
             $stmt = $this->db->prepare('SELECT o.*, u.username FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.user_id = ? ORDER BY o.id DESC');

@@ -1,5 +1,8 @@
 <?php
-// backend/controllers/OrderController.php
+/**
+ * OrderController — checkout and order history.
+ * create() uses a DB transaction so order + stock update succeed or fail together.
+ */
 
 require_once __DIR__ . '/../models/OrderModel.php';
 require_once __DIR__ . '/../models/ProductModel.php';
@@ -16,6 +19,7 @@ class OrderController {
 
     public function list($user = null) {
         header('Content-Type: application/json');
+        // Manager sees all orders; customer sees only their own
         if ($user && $user['role'] === 'manager') {
             $orders = $this->orderModel->getOrders();
         } elseif ($user) {
@@ -45,6 +49,7 @@ class OrderController {
         $totalPrice = 0.0;
         $items = [];
 
+        // Validate each cart line: exists, enough stock, compute total
         foreach ($data['items'] as $item) {
             if (!isset($item['product_id'], $item['quantity'])) {
                 continue;
@@ -99,7 +104,7 @@ class OrderController {
             $this->orderModel->commit();
             echo json_encode(['success' => true, 'order_id' => $orderId, 'total_price' => $totalPrice]);
         } catch (Exception $e) {
-            $this->orderModel->rollBack();
+            $this->orderModel->rollBack(); // Undo partial order if anything failed
             require_once __DIR__ . '/../config/http.php';
             $payload = ['error' => 'Unable to create order'];
             if (isAppDebug()) {
@@ -110,7 +115,7 @@ class OrderController {
     }
 
     public function updateStatus($id) {
-        $user = Auth::requireManager();
+        Auth::requireManager();
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data || !isset($data['status'])) {
             http_response_code(400);
