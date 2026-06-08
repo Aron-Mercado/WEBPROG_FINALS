@@ -1,5 +1,9 @@
 # backend/public/.htaccess
-# Redirect all requests to index.php so the PHP router can handle REST endpoints.
+# Only folder under backend/ that should accept HTTP requests (overrides parent deny rules).
+
+Order deny,allow
+# Allow from all — to keep the API entry open while other folders are denied.
+Allow from all
 
 Options -Indexes
 RewriteEngine On
